@@ -1,700 +1,138 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WFH Tracker</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0d0f14;
-    --surface: #161921;
-    --surface2: #1e2230;
-    --border: #2a2f3f;
-    --text: #e8eaf2;
-    --text-dim: #6b7294;
-    --office: #00e5a0;
-    --office-bg: rgba(0,229,160,0.12);
-    --wfh: #7b8cff;
-    --wfh-bg: rgba(123,140,255,0.12);
-    --weekend: #2a2f3f;
-    --accent: #ff6b6b;
-    --gold: #ffd166;
-  }
+# 🏠 WFH Tracker
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+A beautifully designed, single-file attendance tracker that helps you monitor your **Work From Home** vs **In-Office** days — with zero backend, zero dependencies, and persistent browser storage.
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding: 20px;
-    background-image: radial-gradient(ellipse at 20% 20%, rgba(123,140,255,0.07) 0%, transparent 60%),
-                      radial-gradient(ellipse at 80% 80%, rgba(0,229,160,0.05) 0%, transparent 60%);
-  }
+---
 
-  .app {
-    max-width: 900px;
-    margin: 0 auto;
-  }
+## ✨ Features
 
-  /* HEADER */
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 32px;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
+- 📅 **Interactive Calendar** — Navigate across any month, past or future
+- 🏢 **Mark Attendance** — Click any weekday to log as *In Office* or *WFH*
+- 📊 **Live Statistics** — Real-time percentage breakdown and animated progress bar
+- 🚫 **Weekend Blocking** — Saturdays and Sundays are greyed out and non-selectable
+- 💾 **Persistent Storage** — Data saved in `localStorage`; survives page reloads
+- 📱 **Mobile Friendly** — Fully responsive design for all screen sizes
+- 🎨 **Dark UI** — Sleek dark-mode interface with a modern aesthetic
 
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
+---
 
-  .logo-icon {
-    width: 44px; height: 44px;
-    background: linear-gradient(135deg, var(--office), var(--wfh));
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
-  }
+## 🚀 Getting Started
 
-  h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.6rem;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-  }
+No installation required. It's a single HTML file.
 
-  h1 span { color: var(--office); }
+```bash
+# 1. Clone or download the project
+git clone https://github.com/your-username/wfh-tracker.git
 
-  .month-tag {
-    font-size: 0.75rem;
-    color: var(--text-dim);
-    background: var(--surface2);
-    padding: 4px 12px;
-    border-radius: 20px;
-    border: 1px solid var(--border);
-    font-family: 'Syne', sans-serif;
-    font-weight: 600;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
+# 2. Open the file in any browser
+open wfh-tracker.html
+```
 
-  /* STATS */
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-    margin-bottom: 28px;
-  }
+Or simply double-click `wfh-tracker.html` — that's it.
 
-  .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 18px 20px;
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.2s;
-  }
+---
 
-  .stat-card:hover { transform: translateY(-2px); }
+## 🖱️ How to Use
 
-  .stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-  }
-  .stat-card.total::before { background: var(--gold); }
-  .stat-card.office::before { background: var(--office); }
-  .stat-card.wfh::before { background: var(--wfh); }
+| Action | How |
+|---|---|
+| Mark a day | Click any weekday on the calendar |
+| Choose status | Select *In Office* 🏢 or *WFH* 🏠 from the popup |
+| Clear a day | Click the day → select *Clear* |
+| Navigate months | Use the `‹` and `›` arrows |
+| Jump to today | Click the **Today** button |
 
-  .stat-label {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--text-dim);
-    font-family: 'Syne', sans-serif;
-    font-weight: 600;
-    margin-bottom: 8px;
-  }
+### Example
+If you mark **4 days as In Office** and **1 day as WFH**:
+- **In Office:** 80%
+- **WFH:** 20%
+- **Total:** 5 days marked
 
-  .stat-value {
-    font-family: 'Syne', sans-serif;
-    font-size: 2rem;
-    font-weight: 800;
-    line-height: 1;
-  }
+The stats and progress bar update instantly.
 
-  .stat-card.total .stat-value { color: var(--gold); }
-  .stat-card.office .stat-value { color: var(--office); }
-  .stat-card.wfh .stat-value { color: var(--wfh); }
+---
 
-  .stat-sub {
-    font-size: 0.75rem;
-    color: var(--text-dim);
-    margin-top: 4px;
-  }
+## 📁 Project Structure
 
-  /* PROGRESS BAR */
-  .progress-section {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 28px;
-  }
+```
+wfh-tracker/
+└── wfh-tracker.html     # The entire app — HTML + CSS + JS in one file
+```
 
-  .progress-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
+No frameworks. No build tools. No npm. Just one file.
 
-  .progress-title {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 0.9rem;
-  }
+---
 
-  .progress-legend {
-    display: flex;
-    gap: 16px;
-  }
+## 🗄️ Data Storage
 
-  .legend-item {
-    display: flex; align-items: center; gap: 6px;
-    font-size: 0.75rem;
-    color: var(--text-dim);
-  }
+All attendance data is stored in your browser's `localStorage` under the key:
 
-  .legend-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-  }
+```
+wfh_tracker_data
+```
 
-  .progress-bar {
-    height: 10px;
-    background: var(--surface2);
-    border-radius: 10px;
-    overflow: hidden;
-    display: flex;
-  }
+Data is saved as a JSON object where each key is a date string and the value is the attendance type:
 
-  .progress-fill {
-    height: 100%;
-    transition: width 0.6s cubic-bezier(0.34,1.56,0.64,1);
-    border-radius: 10px;
-  }
-
-  .progress-fill.office { background: var(--office); }
-  .progress-fill.wfh { background: var(--wfh); margin-left: 2px; }
-
-  /* CALENDAR */
-  .calendar-section {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    overflow: hidden;
-  }
-
-  .cal-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 24px 16px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .cal-title {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 1.15rem;
-  }
-
-  .nav-btns { display: flex; gap: 8px; }
-
-  .nav-btn {
-    width: 36px; height: 36px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    background: var(--surface2);
-    color: var(--text);
-    cursor: pointer;
-    font-size: 1rem;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s;
-    font-weight: bold;
-  }
-
-  .nav-btn:hover {
-    background: var(--border);
-    border-color: var(--text-dim);
-  }
-
-  .today-btn {
-    padding: 0 14px;
-    width: auto;
-    font-family: 'Syne', sans-serif;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--gold);
-    border-color: rgba(255,209,102,0.3);
-  }
-
-  .today-btn:hover { border-color: var(--gold); background: rgba(255,209,102,0.08); }
-
-  /* Day labels */
-  .day-labels {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    padding: 12px 16px 6px;
-    gap: 4px;
-  }
-
-  .day-label {
-    text-align: center;
-    font-size: 0.65rem;
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    padding: 4px;
-  }
-
-  .day-label.weekend { color: #3d4255; }
-
-  /* Calendar grid */
-  .cal-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    padding: 4px 16px 20px;
-    gap: 6px;
-  }
-
-  .cal-day {
-    aspect-ratio: 1;
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Syne', sans-serif;
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.18s cubic-bezier(0.34,1.56,0.64,1);
-    position: relative;
-    border: 2px solid transparent;
-    min-height: 44px;
-    user-select: none;
-  }
-
-  .cal-day:not(.empty):not(.weekend):hover {
-    border-color: var(--text-dim);
-    background: var(--surface2);
-    transform: scale(1.08);
-  }
-
-  .cal-day.empty { cursor: default; }
-
-  .cal-day.weekend {
-    cursor: not-allowed;
-    color: #2d3245;
-    background: transparent;
-  }
-
-  .cal-day.today {
-    border-color: var(--gold) !important;
-    color: var(--gold);
-  }
-
-  .cal-day.today::after {
-    content: '';
-    position: absolute;
-    bottom: 5px;
-    width: 4px; height: 4px;
-    background: var(--gold);
-    border-radius: 50%;
-  }
-
-  .cal-day.in-office {
-    background: var(--office-bg);
-    border-color: var(--office);
-    color: var(--office);
-  }
-
-  .cal-day.wfh {
-    background: var(--wfh-bg);
-    border-color: var(--wfh);
-    color: var(--wfh);
-  }
-
-  .cal-day .day-icon {
-    font-size: 0.65rem;
-    margin-top: 1px;
-    opacity: 0.8;
-  }
-
-  /* TOOLTIP / Context Menu */
-  .day-menu {
-    position: fixed;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 8px;
-    z-index: 1000;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-    display: none;
-    gap: 6px;
-    flex-direction: column;
-    min-width: 160px;
-  }
-
-  .day-menu.show { display: flex; animation: popIn 0.15s ease; }
-
-  @keyframes popIn {
-    from { opacity: 0; transform: scale(0.9) translateY(-4px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-  }
-
-  .menu-date {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 0.75rem;
-    color: var(--text-dim);
-    padding: 4px 10px 6px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 2px;
-    letter-spacing: 0.5px;
-  }
-
-  .menu-btn {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-    border-radius: 10px;
-    border: none;
-    background: transparent;
-    color: var(--text);
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 500;
-    transition: background 0.1s;
-    text-align: left;
-  }
-
-  .menu-btn:hover { background: var(--border); }
-  .menu-btn.active-office { background: var(--office-bg); color: var(--office); }
-  .menu-btn.active-wfh { background: var(--wfh-bg); color: var(--wfh); }
-
-  .menu-btn .btn-icon { font-size: 1rem; }
-
-  .menu-btn.clear-btn { color: var(--text-dim); font-size: 0.8rem; }
-  .menu-btn.clear-btn:hover { color: var(--accent); background: rgba(255,107,107,0.1); }
-
-  /* Overlay */
-  .overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 999;
-    display: none;
-  }
-  .overlay.show { display: block; }
-
-  /* Footer note */
-  .footer-note {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 0.72rem;
-    color: var(--text-dim);
-  }
-
-  /* Responsive */
-  @media (max-width: 600px) {
-    body { padding: 12px; }
-    h1 { font-size: 1.3rem; }
-    .stats { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .stat-card { padding: 12px 10px; }
-    .stat-value { font-size: 1.5rem; }
-    .stat-label { font-size: 0.62rem; }
-    .cal-day { font-size: 0.78rem; min-height: 38px; border-radius: 10px; }
-    .cal-grid { gap: 4px; padding: 4px 10px 14px; }
-    .day-labels { padding: 8px 10px 4px; }
-    .cal-nav { padding: 14px 16px 12px; }
-    .cal-title { font-size: 1rem; }
-  }
-
-  @media (max-width: 380px) {
-    .stats { grid-template-columns: repeat(3, 1fr); gap: 6px; }
-    .stat-card { padding: 10px 8px; }
-    .stat-value { font-size: 1.3rem; }
-  }
-</style>
-</head>
-<body>
-<div class="app">
-
-  <header>
-    <div class="logo">
-      <div class="logo-icon">🏠</div>
-      <h1>WFH <span>Tracker</span></h1>
-    </div>
-    <div class="month-tag" id="headerMonth">—</div>
-  </header>
-
-  <!-- Stats -->
-  <div class="stats">
-    <div class="stat-card total">
-      <div class="stat-label">Total Days</div>
-      <div class="stat-value" id="statTotal">0</div>
-      <div class="stat-sub">Marked</div>
-    </div>
-    <div class="stat-card office">
-      <div class="stat-label">In Office</div>
-      <div class="stat-value" id="statOffice">0%</div>
-      <div class="stat-sub" id="statOfficeDays">0 days</div>
-    </div>
-    <div class="stat-card wfh">
-      <div class="stat-label">Work From Home</div>
-      <div class="stat-value" id="statWFH">0%</div>
-      <div class="stat-sub" id="statWFHDays">0 days</div>
-    </div>
-  </div>
-
-  <!-- Progress -->
-  <div class="progress-section">
-    <div class="progress-header">
-      <div class="progress-title">Attendance Split</div>
-      <div class="progress-legend">
-        <div class="legend-item">
-          <div class="legend-dot" style="background:var(--office)"></div> In Office
-        </div>
-        <div class="legend-item">
-          <div class="legend-dot" style="background:var(--wfh)"></div> WFH
-        </div>
-      </div>
-    </div>
-    <div class="progress-bar">
-      <div class="progress-fill office" id="progressOffice" style="width:0%"></div>
-      <div class="progress-fill wfh" id="progressWFH" style="width:0%"></div>
-    </div>
-  </div>
-
-  <!-- Calendar -->
-  <div class="calendar-section">
-    <div class="cal-nav">
-      <div class="nav-btns">
-        <button class="nav-btn" onclick="changeMonth(-1)">‹</button>
-        <button class="nav-btn today-btn" onclick="goToday()">Today</button>
-        <button class="nav-btn" onclick="changeMonth(1)">›</button>
-      </div>
-      <div class="cal-title" id="calTitle">—</div>
-    </div>
-    <div class="day-labels">
-      <div class="day-label">Mon</div>
-      <div class="day-label">Tue</div>
-      <div class="day-label">Wed</div>
-      <div class="day-label">Thu</div>
-      <div class="day-label">Fri</div>
-      <div class="day-label weekend">Sat</div>
-      <div class="day-label weekend">Sun</div>
-    </div>
-    <div class="cal-grid" id="calGrid"></div>
-  </div>
-
-  <div class="footer-note">Click any weekday to mark attendance • Data saved in browser</div>
-</div>
-
-<!-- Overlay -->
-<div class="overlay" id="overlay" onclick="closeMenu()"></div>
-
-<!-- Day Menu -->
-<div class="day-menu" id="dayMenu">
-  <div class="menu-date" id="menuDateLabel"></div>
-  <button class="menu-btn" id="btnOffice" onclick="markDay('office')">
-    <span class="btn-icon">🏢</span> In Office
-  </button>
-  <button class="menu-btn" id="btnWFH" onclick="markDay('wfh')">
-    <span class="btn-icon">🏠</span> Work From Home
-  </button>
-  <button class="menu-btn clear-btn" onclick="markDay('clear')">
-    <span class="btn-icon">✕</span> Clear
-  </button>
-</div>
-
-<script>
-const STORAGE_KEY = 'wfh_tracker_data';
-let data = {};
-let currentYear, currentMonth, selectedDate = null;
-
-function loadData() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    data = raw ? JSON.parse(raw) : {};
-  } catch { data = {}; }
+```json
+{
+  "2025-03-03": "office",
+  "2025-03-04": "wfh",
+  "2025-03-05": "office"
 }
+```
 
-function saveData() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+> ⚠️ Clearing your browser data or using a different browser/device will reset the tracker.
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Markup | HTML5 |
+| Styling | CSS3 (custom properties, grid, flexbox, animations) |
+| Logic | Vanilla JavaScript (ES6+) |
+| Storage | Browser `localStorage` API |
+| Fonts | Google Fonts — Syne + DM Sans |
+
+---
+
+## 📱 Browser Compatibility
+
+Works on all modern browsers:
+
+- ✅ Chrome / Edge
+- ✅ Firefox
+- ✅ Safari (desktop & iOS)
+- ✅ Android Chrome
+
+---
+
+## 🎨 Customization
+
+You can easily tweak the color scheme via CSS variables at the top of the `<style>` block:
+
+```css
+:root {
+  --office: #00e5a0;   /* In-Office color */
+  --wfh: #7b8cff;      /* WFH color */
+  --bg: #0d0f14;       /* Background */
+  --gold: #ffd166;     /* Accent / Today highlight */
 }
+```
 
-function dateKey(y, m, d) {
-  return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-}
+---
 
-function goToday() {
-  const now = new Date();
-  currentYear = now.getFullYear();
-  currentMonth = now.getMonth();
-  render();
-}
+## 📜 License
 
-function changeMonth(dir) {
-  currentMonth += dir;
-  if (currentMonth > 11) { currentMonth = 0; currentYear++; }
-  if (currentMonth < 0) { currentMonth = 11; currentYear--; }
-  render();
-}
+MIT License — free to use, modify, and distribute.
 
-function render() {
-  renderCalendar();
-  updateStats();
-  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  document.getElementById('calTitle').textContent = `${months[currentMonth]} ${currentYear}`;
-  document.getElementById('headerMonth').textContent = `${months[currentMonth].slice(0,3)} ${currentYear}`;
-}
+---
 
-function renderCalendar() {
-  const grid = document.getElementById('calGrid');
-  grid.innerHTML = '';
-  const today = new Date();
-  const firstDay = new Date(currentYear, currentMonth, 1);
-  // Monday-based: 0=Mon ... 6=Sun
-  let startOffset = (firstDay.getDay() + 6) % 7;
-  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+## 🙌 Contributing
 
-  for (let i = 0; i < startOffset; i++) {
-    const empty = document.createElement('div');
-    empty.className = 'cal-day empty';
-    grid.appendChild(empty);
-  }
+Pull requests are welcome! For major changes, please open an issue first to discuss what you'd like to change.
 
-  for (let d = 1; d <= daysInMonth; d++) {
-    const date = new Date(currentYear, currentMonth, d);
-    const dow = date.getDay(); // 0=Sun, 6=Sat
-    const isWeekend = (dow === 0 || dow === 6);
-    const key = dateKey(currentYear, currentMonth, d);
-    const status = data[key];
-    const isToday = (today.getFullYear() === currentYear && today.getMonth() === currentMonth && today.getDate() === d);
+---
 
-    const el = document.createElement('div');
-    el.className = 'cal-day';
-    if (isWeekend) el.classList.add('weekend');
-    else if (status === 'office') el.classList.add('in-office');
-    else if (status === 'wfh') el.classList.add('wfh');
-    if (isToday) el.classList.add('today');
-
-    let icon = '';
-    if (status === 'office') icon = '<div class="day-icon">🏢</div>';
-    else if (status === 'wfh') icon = '<div class="day-icon">🏠</div>';
-
-    el.innerHTML = `<span>${d}</span>${icon}`;
-
-    if (!isWeekend) {
-      el.addEventListener('click', (e) => openMenu(e, key, d));
-    }
-    grid.appendChild(el);
-  }
-}
-
-function openMenu(e, key, d) {
-  e.stopPropagation();
-  selectedDate = key;
-  const status = data[key];
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  document.getElementById('menuDateLabel').textContent = `${d} ${months[currentMonth]} ${currentYear}`;
-
-  const btnO = document.getElementById('btnOffice');
-  const btnW = document.getElementById('btnWFH');
-  btnO.className = 'menu-btn' + (status === 'office' ? ' active-office' : '');
-  btnW.className = 'menu-btn' + (status === 'wfh' ? ' active-wfh' : '');
-
-  const menu = document.getElementById('dayMenu');
-  menu.style.display = 'flex';
-  
-  // Position
-  const rect = e.currentTarget.getBoundingClientRect();
-  const menuW = 170, menuH = 160;
-  let left = rect.left + rect.width / 2 - menuW / 2;
-  let top = rect.bottom + 8;
-
-  if (left + menuW > window.innerWidth - 10) left = window.innerWidth - menuW - 10;
-  if (left < 10) left = 10;
-  if (top + menuH > window.innerHeight - 10) top = rect.top - menuH - 8;
-
-  menu.style.left = left + 'px';
-  menu.style.top = top + 'px';
-  menu.classList.add('show');
-  document.getElementById('overlay').classList.add('show');
-}
-
-function closeMenu() {
-  document.getElementById('dayMenu').classList.remove('show');
-  document.getElementById('overlay').classList.remove('show');
-  selectedDate = null;
-}
-
-function markDay(type) {
-  if (!selectedDate) return;
-  if (type === 'clear') delete data[selectedDate];
-  else data[selectedDate] = type;
-  saveData();
-  render();
-  closeMenu();
-}
-
-function updateStats() {
-  // Count for entire dataset (all months)
-  let office = 0, wfh = 0;
-  for (const key in data) {
-    if (data[key] === 'office') office++;
-    else if (data[key] === 'wfh') wfh++;
-  }
-  const total = office + wfh;
-  const offPct = total ? Math.round(office / total * 100) : 0;
-  const wfhPct = total ? 100 - offPct : 0;
-
-  document.getElementById('statTotal').textContent = total;
-  document.getElementById('statOffice').textContent = offPct + '%';
-  document.getElementById('statOfficeDays').textContent = office + ' day' + (office !== 1 ? 's' : '');
-  document.getElementById('statWFH').textContent = wfhPct + '%';
-  document.getElementById('statWFHDays').textContent = wfh + ' day' + (wfh !== 1 ? 's' : '');
-
-  document.getElementById('progressOffice').style.width = offPct + '%';
-  document.getElementById('progressWFH').style.width = wfhPct + '%';
-}
-
-// Init
-loadData();
-goToday();
-
-// Close on Escape
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
-</script>
-</body>
-</html>
+*Built with ❤️ as a single HTML file. No servers. No tracking. Your data stays in your browser.*
