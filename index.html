@@ -20,6 +20,8 @@
     --weekend: #2a2f3f;
     --accent: #ff6b6b;
     --gold: #ffd166;
+    --holiday: #ff9f43;
+    --holiday-bg: rgba(255,159,67,0.13);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -342,6 +344,18 @@
     color: var(--wfh);
   }
 
+  .cal-day.holiday {
+    background: var(--holiday-bg);
+    border-color: var(--holiday);
+    color: var(--holiday);
+  }
+
+  .cal-day.holiday {
+    background: var(--holiday-bg);
+    border-color: var(--holiday);
+    color: var(--holiday);
+  }
+
   .cal-day .day-icon {
     font-size: 0.65rem;
     margin-top: 1px;
@@ -407,7 +421,15 @@
   .menu-btn.clear-btn { color: var(--text-dim); font-size: 0.8rem; }
   .menu-btn.clear-btn:hover { color: var(--accent); background: rgba(255,107,107,0.1); }
 
-  /* Overlay */
+  .menu-btn.active-holiday { background: var(--holiday-bg); color: var(--holiday); }
+
+  .menu-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 2px 0;
+  }
+
+  /* Overlay - invisible, blocks background clicks but menu only closes via selection */
   .overlay {
     position: fixed;
     inset: 0;
@@ -517,11 +539,11 @@
     <div class="cal-grid" id="calGrid"></div>
   </div>
 
-  <div class="footer-note">Click any weekday to mark attendance • Data saved in browser</div>
+  <div class="footer-note">Click any weekday to mark attendance • Holidays don't affect calculations • Data saved in browser</div>
 </div>
 
 <!-- Overlay -->
-<div class="overlay" id="overlay" onclick="closeMenu()"></div>
+<div class="overlay" id="overlay"></div>
 
 <!-- Day Menu -->
 <div class="day-menu" id="dayMenu">
@@ -532,6 +554,10 @@
   <button class="menu-btn" id="btnWFH" onclick="markDay('wfh')">
     <span class="btn-icon">🏠</span> Work From Home
   </button>
+  <button class="menu-btn" id="btnHoliday" onclick="markDay('holiday')">
+    <span class="btn-icon">🎉</span> Holiday
+  </button>
+  <div class="menu-divider"></div>
   <button class="menu-btn clear-btn" onclick="markDay('clear')">
     <span class="btn-icon">✕</span> Clear
   </button>
@@ -607,11 +633,13 @@ function renderCalendar() {
     if (isWeekend) el.classList.add('weekend');
     else if (status === 'office') el.classList.add('in-office');
     else if (status === 'wfh') el.classList.add('wfh');
+    else if (status === 'holiday') el.classList.add('holiday');
     if (isToday) el.classList.add('today');
 
     let icon = '';
     if (status === 'office') icon = '<div class="day-icon">🏢</div>';
     else if (status === 'wfh') icon = '<div class="day-icon">🏠</div>';
+    else if (status === 'holiday') icon = '<div class="day-icon">🎉</div>';
 
     el.innerHTML = `<span>${d}</span>${icon}`;
 
@@ -631,15 +659,18 @@ function openMenu(e, key, d) {
 
   const btnO = document.getElementById('btnOffice');
   const btnW = document.getElementById('btnWFH');
+  const btnH = document.getElementById('btnHoliday');
   btnO.className = 'menu-btn' + (status === 'office' ? ' active-office' : '');
   btnW.className = 'menu-btn' + (status === 'wfh' ? ' active-wfh' : '');
+  btnH.className = 'menu-btn' + (status === 'holiday' ? ' active-holiday' : '');
 
   const menu = document.getElementById('dayMenu');
-  menu.style.display = 'flex';
-  
+  menu.style.display = 'none';
+  menu.classList.remove('show');
+
   // Position
   const rect = e.currentTarget.getBoundingClientRect();
-  const menuW = 170, menuH = 160;
+  const menuW = 180, menuH = 200;
   let left = rect.left + rect.width / 2 - menuW / 2;
   let top = rect.bottom + 8;
 
@@ -649,12 +680,15 @@ function openMenu(e, key, d) {
 
   menu.style.left = left + 'px';
   menu.style.top = top + 'px';
-  menu.classList.add('show');
+  menu.style.display = 'flex';
+  requestAnimationFrame(() => menu.classList.add('show'));
   document.getElementById('overlay').classList.add('show');
 }
 
 function closeMenu() {
-  document.getElementById('dayMenu').classList.remove('show');
+  const menu = document.getElementById('dayMenu');
+  menu.classList.remove('show');
+  menu.style.display = 'none';
   document.getElementById('overlay').classList.remove('show');
   selectedDate = null;
 }
@@ -669,11 +703,12 @@ function markDay(type) {
 }
 
 function updateStats() {
-  // Count for entire dataset (all months)
+  // Count for entire dataset — holiday excluded from calculations
   let office = 0, wfh = 0;
   for (const key in data) {
     if (data[key] === 'office') office++;
     else if (data[key] === 'wfh') wfh++;
+    // 'holiday' intentionally skipped
   }
   const total = office + wfh;
   const offPct = total ? Math.round(office / total * 100) : 0;
@@ -692,9 +727,6 @@ function updateStats() {
 // Init
 loadData();
 goToday();
-
-// Close on Escape
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
 </script>
 </body>
 </html>
